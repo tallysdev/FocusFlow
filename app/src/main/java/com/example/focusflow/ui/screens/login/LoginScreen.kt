@@ -1,5 +1,6 @@
 package com.example.focusflow.ui.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,29 +23,38 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.focusflow.R
 
 
 @Composable
-fun LoginScreen() {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    var passwordVisible by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,10 +94,10 @@ fun LoginScreen() {
             }
             Spacer(modifier = Modifier.height(24.dp))
             OutlinedTextField(
-                value = email.value,
-                onValueChange = { email.value = it },
-                modifier = Modifier.fillMaxWidth(),
+                value = uiState.email,
+                onValueChange = { viewModel.onEmailChange(it) },
                 label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                 shape = RoundedCornerShape(10.dp),
                 colors = androidx.compose.material3.TextFieldDefaults.colors(
@@ -106,18 +116,22 @@ fun LoginScreen() {
                 color = Color.White
             )
             OutlinedTextField(
-                value = password.value,
-                onValueChange = { password.value = it },
-                modifier = Modifier.fillMaxWidth(),
+                value = uiState.password,
+                onValueChange = { viewModel.onPasswordChange(it) },
                 label = { Text("Password") },
-                visualTransformation = PasswordVisualTransformation(),
-                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                leadingIcon = {
+                    Icon(Icons.Default.Lock, contentDescription = "Password Icon")
+                },
                 trailingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_eye),
-                        contentDescription = null, tint = Color.DarkGray
-                    )
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_eye),
+                            // Todo: adicionar isso pra quando o usuário clicar no olho mudar o icone= if (passwordVisible) Icons.Default. else Icons.Default.VisibilityOff,
+                            contentDescription = if (passwordVisible) "Hide Password" else "Show Password"
+                        )
+                    }
                 },
                 colors = androidx.compose.material3.TextFieldDefaults.colors(
                     focusedContainerColor = Color.White,
@@ -136,7 +150,7 @@ fun LoginScreen() {
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /* Handle Log In Action */ },
+                onClick = { viewModel.login() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -173,7 +187,7 @@ fun LoginScreen() {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Handle Google Action */ },
+                onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -189,11 +203,31 @@ fun LoginScreen() {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "Continue with Google", color = Color.Black)
             }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Handling Login Result
+            when (val loginResult = uiState.loginResult) {
+                is LoginResult.Success -> {
+                    // Show Toast on Success
+                    LaunchedEffect(Unit) {
+                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                is LoginResult.Error -> {
+                    // Show Toast on Error
+                    LaunchedEffect(Unit) {
+                        Toast.makeText(context, loginResult.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                null -> {}
+            }
         }
     }
 }
 
-@Preview(showBackground = true, name = "Login Screen Preview")
+@Preview(showBackground = true, name = "Login Screen Preview", showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
     LoginScreen()
