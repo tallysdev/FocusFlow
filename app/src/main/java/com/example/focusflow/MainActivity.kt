@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.focusflow.navigation.BottomNavigationBar
 import com.example.focusflow.ui.screens.login.LoginScreen
@@ -30,30 +31,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             FocusFlowTheme {
                 val navController = rememberNavController()
-//                Scaffold(containerColor = Color(0XFF0A0D2E)) { paddingValues ->
-//                    NavHost(
-//                        navController = navController,
-//                        startDestination = "signup_screen"
-//                    ) { // Or "login_screen" if that's your default
-//                        composable("signup_screen") {
-//                            SignUpScreen(navController = navController) // Pass NavController
-//                        }
-//                        composable("login_screen") {
-//                            LoginScreen(navController = navController) // Pass NavController
-//                        }
-//                        // Add other destinations like "home_screen"
-//                        // composable("home_screen") { HomeScreen(navController = navController) }
-//                    }
-//                }
+
                 Scaffold(
                     bottomBar = {
-                        BottomNavigationBar(navController = navController)
+                        if (shouldShowBottomBar(navController)) {
+                            BottomNavigationBar(navController = navController)
+                        }
                     },
-                    containerColor = Color(0xFF0A0D2E) // Fundo escuro igual ao da imagem
+                    containerColor = Color(0xFF0A0D2E)
                 ) { paddingValues ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home_screen",
+                        startDestination = "login_screen",
                         modifier = Modifier.padding(paddingValues)
                     ) {
                         composable("signup_screen") {
@@ -62,15 +51,25 @@ class MainActivity : ComponentActivity() {
                         composable("login_screen") {
                             LoginScreen(navController = navController)
                         }
-                        composable("home_screen") { HomeScreen() }
-//                        composable("achievements_screen") { AchievementsScreen() }
-                        composable("profile_screen") { ProfileScreen() }
+                        composable("home_screen") {
+                            HomeScreen()
+                        }
+                        composable("profile_screen") {
+                            ProfileScreen()
+                        }
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun shouldShowBottomBar(navController: androidx.navigation.NavController): Boolean {
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    return currentRoute in listOf("home_screen", "profile_screen")
+}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

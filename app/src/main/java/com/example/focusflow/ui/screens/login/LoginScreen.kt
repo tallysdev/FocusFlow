@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -57,6 +58,32 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.loginResult) {
+        when (val loginResult = uiState.loginResult) {
+            is LoginResult.Success -> {
+                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                navController.navigate("home_screen") {
+                    // Clear the back stack up to the login screen, so the user can't go back to it
+                    popUpTo("login_screen") {
+                        inclusive = true
+                    }
+                    // Avoid multiple copies of the home screen
+                    launchSingleTop = true
+                }
+                viewModel.resetLoginResult() // Important: Reset the result to avoid re-triggering
+            }
+
+            is LoginResult.Error -> {
+                Toast.makeText(context, loginResult.message, Toast.LENGTH_LONG)
+                    .show() // Show error for longer
+                viewModel.resetLoginResult() // Important: Reset the result
+            }
+
+            null -> { /* Initial state or already handled */
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,16 +115,16 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                     color = Color.White
                 )
                 Text(
-                    text = "Sign in to your Account",
-                    fontSize = 24.sp,
+                    text = "Sign up",
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = Color.Blue,
+                    style = TextStyle(textDecoration = TextDecoration.Underline),
                     modifier = Modifier.clickable {
-                        navController.navigate("signup_screen")
                         // Optional: If you want to clear the Login screen from backstack when going to Sign Up
-                        // navController.navigate("signup_screen") {
-                        // popUpTo("login_screen") { inclusive = true }
-                        // }
+                        navController.navigate("signup_screen") {
+                            popUpTo("login_screen") { inclusive = true }
+                        }
                     }
                 )
             }
@@ -213,25 +240,6 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 Text(text = "Continue with Google", color = Color.Black)
             }
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Handling Login Result
-            when (val loginResult = uiState.loginResult) {
-                is LoginResult.Success -> {
-                    // Show Toast on Success
-                    LaunchedEffect(Unit) {
-                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                is LoginResult.Error -> {
-                    // Show Toast on Error
-                    LaunchedEffect(Unit) {
-                        Toast.makeText(context, loginResult.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                null -> {}
-            }
         }
     }
 }

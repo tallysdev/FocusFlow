@@ -1,7 +1,9 @@
 package com.example.focusflow.ui.screens.home
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,19 +12,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.focusflow.R
 import com.example.focusflow.ui.screens.home.Task
 import com.example.focusflow.ui.screens.home.TaskGroup
 import com.example.focusflow.ui.screens.home.TaskGroupCard
+import com.example.focusflow.ui.screens.profile.ProfileScreen
 
 
 @Composable
@@ -45,15 +53,21 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             .padding(16.dp)
     ) {
         // Centralized Title
-        Box(
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(modifier = Modifier.width(48.dp))
             Text(
                 "Activities",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
             )
+            IconButton(onClick = { /* Handle menu click */ }) {
+                Icon(painter = painterResource(id = R.drawable.ic_plus), contentDescription = "Menu", tint = Color.White)
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -63,9 +77,22 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             value = searchQuery,
             onValueChange = { searchQuery = it },
             placeholder = { Text("Search activities") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_search),
+                    tint = Color(0XFF8F96CC),
+                    contentDescription = "Icone busca",
+                )
+            },
             colors = TextFieldDefaults.colors(
-                Color.Black
+                unfocusedContainerColor = Color(0XFF21264A),
+                unfocusedPlaceholderColor = Color(0XFF8F96CC),
+                focusedContainerColor = Color(0XFF21264A),
+                focusedPlaceholderColor = Color(0XFF21264A),
+                focusedTextColor = Color(0XFF8F96CC)
             )
         )
 
@@ -81,8 +108,13 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     selected = selectedFilter == filter,
                     onClick = { selectedFilter = filter },
                     label = {
-                        Text(filter)
-                    }
+                        Text(filter, color = Color.White)
+                    },
+                    border = BorderStroke(1.dp, Color.Transparent),
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = Color(0XFF21264A),
+                        selectedContainerColor = Color(0XFF8F96CC)
+                    )
                 )
             }
         }
@@ -118,7 +150,6 @@ fun TaskGroupCard(group: TaskGroup, onToggle: (Task) -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column {
-            // Imagem genérica ou cor preenchida
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -180,4 +211,8 @@ fun TaskGroupCard(group: TaskGroup, onToggle: (Task) -> Unit) {
     }
 }
 
-
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen()
+}

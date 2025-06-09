@@ -36,6 +36,10 @@ class LoginViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(loginResult = result)
         }
     }
+
+    fun resetLoginResult() {
+        _uiState.value = _uiState.value.copy(loginResult = null)
+    }
 }
 
 data class LoginUiState(
