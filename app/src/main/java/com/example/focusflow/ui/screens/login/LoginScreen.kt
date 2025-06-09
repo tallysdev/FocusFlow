@@ -3,6 +3,7 @@ package com.example.focusflow.ui.screens.login
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,11 +48,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.focusflow.R
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavHostController) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
@@ -86,10 +88,17 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
                     color = Color.White
                 )
                 Text(
-                    text = "Sign Up",
-                    fontSize = 12.sp,
-                    color = Color(0xFF3AB4F2),
-                    textDecoration = TextDecoration.Underline
+                    text = "Sign in to your Account",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.clickable {
+                        navController.navigate("signup_screen")
+                        // Optional: If you want to clear the Login screen from backstack when going to Sign Up
+                        // navController.navigate("signup_screen") {
+                        // popUpTo("login_screen") { inclusive = true }
+                        // }
+                    }
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -192,7 +201,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                shape = RoundedCornerShape(6.dp)
+                shape = RoundedCornerShape(10.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.img_google),
@@ -230,5 +239,5 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
 @Preview(showBackground = true, name = "Login Screen Preview", showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(navController = NavHostController(LocalContext.current))
 }
