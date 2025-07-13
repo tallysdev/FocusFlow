@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.focusflow" />
+                  <option name="mobileSdkAppId" value="1:447888523302:android:df65ca943f172fec45a6e7" />
+                  <option name="projectId" value="focusflow-ce3ad" />
+                  <option name="projectNumber" value="447888523302" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
