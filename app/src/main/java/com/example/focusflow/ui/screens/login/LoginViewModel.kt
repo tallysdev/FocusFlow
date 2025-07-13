@@ -10,45 +10,49 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
-) : ViewModel() {
-    // UI state
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> get() = _uiState
+class LoginViewModel
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+    ) : ViewModel() {
+        // UI state
+        private val _uiState = MutableStateFlow(LoginUiState())
+        val uiState: StateFlow<LoginUiState> get() = _uiState
 
-    // Updating state for user inputs
-    fun onEmailChange(email: String) {
-        _uiState.value = _uiState.value.copy(email = email)
-    }
+        // Updating state for user inputs
+        fun onEmailChange(email: String) {
+            _uiState.value = _uiState.value.copy(email = email)
+        }
 
-    fun onPasswordChange(password: String) {
-        _uiState.value = _uiState.value.copy(password = password)
-    }
+        fun onPasswordChange(password: String) {
+            _uiState.value = _uiState.value.copy(password = password)
+        }
 
-    // Calling Firebase Login
-    fun login() {
-        viewModelScope.launch {
-            val result = authRepository.login(
-                email = _uiState.value.email,
-                password = _uiState.value.password
-            )
-            _uiState.value = _uiState.value.copy(loginResult = result)
+        // Calling Firebase Login
+        fun login() {
+            viewModelScope.launch {
+                val result =
+                    authRepository.login(
+                        email = _uiState.value.email,
+                        password = _uiState.value.password,
+                    )
+                _uiState.value = _uiState.value.copy(loginResult = result)
+            }
+        }
+
+        fun resetLoginResult() {
+            _uiState.value = _uiState.value.copy(loginResult = null)
         }
     }
-
-    fun resetLoginResult() {
-        _uiState.value = _uiState.value.copy(loginResult = null)
-    }
-}
 
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
-    val loginResult: LoginResult? = null
+    val loginResult: LoginResult? = null,
 )
 
 sealed class LoginResult {
     data object Success : LoginResult()
+
     data class Error(val message: String) : LoginResult()
 }

@@ -8,9 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.regex.Pattern
 
 // Basic email validation pattern
@@ -34,11 +32,10 @@ data class SignUpFormState(
     // General states
     val isLoading: Boolean = false,
     val registrationSuccess: Boolean = false,
-    val registrationError: String? = null
+    val registrationError: String? = null,
 )
 
 class SignUpViewModel : ViewModel() {
-
     var formState by mutableStateOf(SignUpFormState())
         private set
 
@@ -130,29 +127,32 @@ class SignUpViewModel : ViewModel() {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("SignUpViewModel", "createUserWithEmail:failure", task.exception)
-                            formState = formState.copy(
-                                isLoading = false,
-                                registrationError = task.exception?.message ?: "Registration failed"
-                            )
+                            formState =
+                                formState.copy(
+                                    isLoading = false,
+                                    registrationError = task.exception?.message ?: "Registration failed",
+                                )
                         }
                     }
 
                 // For now, just simulating success
                 val success = true // Simulate API call result
-                formState = if (success) {
-                    formState.copy(isLoading = false, registrationSuccess = true)
-                } else {
-                    formState.copy(
-                        isLoading = false,
-                        registrationError = "Simulated registration error."
-                    )
-                }
+                formState =
+                    if (success) {
+                        formState.copy(isLoading = false, registrationSuccess = true)
+                    } else {
+                        formState.copy(
+                            isLoading = false,
+                            registrationError = "Simulated registration error.",
+                        )
+                    }
                 // --- END TODO ---
             } catch (e: Exception) {
-                formState = formState.copy(
-                    isLoading = false,
-                    registrationError = e.message ?: "An unknown error occurred"
-                )
+                formState =
+                    formState.copy(
+                        isLoading = false,
+                        registrationError = e.message ?: "An unknown error occurred",
+                    )
             }
         }
     }

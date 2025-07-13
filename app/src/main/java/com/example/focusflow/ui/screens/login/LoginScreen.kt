@@ -52,9 +52,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.focusflow.R
 
-
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavHostController) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    navController: NavHostController,
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
@@ -80,21 +82,23 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 viewModel.resetLoginResult() // Important: Reset the result
             }
 
-            null -> { /* Initial state or already handled */
+            null -> { // Initial state or already handled
             }
         }
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.linearGradient(listOf(Color(0xFF0A0E20), Color(0xFF1B2448))))
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Brush.linearGradient(listOf(Color(0xFF0A0E20), Color(0xFF1B2448)))),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 20.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.img_focus),
@@ -105,27 +109,27 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 text = "Sign in to your Account",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row {
                 Text(
                     text = "Don't have an account? ",
                     fontSize = 12.sp,
-                    color = Color.White
+                    color = Color.White,
                 )
                 Text(
                     text = "Sign up",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Blue,
+                    color = Color.Cyan,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
-                    modifier = Modifier.clickable {
-                        // Optional: If you want to clear the Login screen from backstack when going to Sign Up
-                        navController.navigate("signup_screen") {
-                            popUpTo("login_screen") { inclusive = true }
-                        }
-                    }
+                    modifier =
+                        Modifier.clickable {
+                            navController.navigate("signup_screen") {
+                                popUpTo("login_screen") { inclusive = true }
+                            }
+                        },
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -134,22 +138,32 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 onValueChange = { viewModel.onEmailChange(it) },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Email,
+                        contentDescription = null,
+                        tint = Color.Black,
+                    )
+                },
                 shape = RoundedCornerShape(10.dp),
-                colors = androidx.compose.material3.TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    disabledContainerColor = Color.White,
-                    unfocusedIndicatorColor = Color.White,
-                )
+                colors =
+                    androidx.compose.material3.TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        unfocusedIndicatorColor = Color.White,
+                    ),
             )
             Spacer(modifier = Modifier.height(6.dp))
             HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 2.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 2.dp),
                 thickness = 1.dp,
-                color = Color.White
+                color = Color.White,
             )
             OutlinedTextField(
                 value = uiState.password,
@@ -158,23 +172,31 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 leadingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = "Password Icon")
+                    Icon(
+                        Icons.Default.Lock,
+                        contentDescription = "Password Icon",
+                        tint = Color.Black,
+                    )
                 },
+                shape = RoundedCornerShape(10.dp),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_eye),
-                            // Todo: adicionar isso pra quando o usuário clicar no olho mudar o icone= if (passwordVisible) Icons.Default. else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Hide Password" else "Show Password"
+                            contentDescription = if (passwordVisible) "Hide Password" else "Show Password",
+                            tint = Color.Black,
                         )
                     }
                 },
-                colors = androidx.compose.material3.TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    disabledContainerColor = Color.White,
-                    unfocusedIndicatorColor = Color.White,
-                )
+                colors =
+                    androidx.compose.material3.TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        disabledContainerColor = Color.White,
+                        unfocusedIndicatorColor = Color.White,
+                    ),
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -182,23 +204,23 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 fontSize = 12.sp,
                 color = Color.White,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { viewModel.login() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1D61E7)),
                 shape = RoundedCornerShape(10.dp),
-
-                ) {
+            ) {
                 Icon(
                     Icons.Default.Add,
                     modifier = Modifier.size(20.dp),
                     contentDescription = null,
-                    tint = Color.White
+                    tint = Color.White,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "Log In", color = Color.White)
@@ -208,33 +230,34 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavH
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     thickness = 1.dp,
-                    color = Color.White
+                    color = Color.White,
                 )
                 Text(
                     text = "   Or   ",
                     fontSize = 14.sp,
-                    color = Color.White
+                    color = Color.White,
                 )
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     thickness = 1.dp,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(10.dp),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.img_google),
                     modifier = Modifier.size(16.dp),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "Continue with Google", color = Color.Black)
